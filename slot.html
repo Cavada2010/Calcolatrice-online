@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cyber Slot - Gaming Hub</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <style>
+        body { background-color: #0b0f19; color: #f9fafb; font-family: system-ui, sans-serif; }
+        .slot-box { background: linear-gradient(145deg, #151f32, #0f172a); border: 2px solid #3b82f6; }
+    </style>
+</head>
+<body class="flex flex-col h-screen w-screen items-center justify-center p-4">
+
+    <div class="w-full max-w-[450px] bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-2xl flex flex-col items-center">
+        
+        <div class="w-full flex justify-between items-center mb-6">
+            <h1 class="text-2xl font-black text-purple-500 tracking-wider">🎰 CYBER SLOT</h1>
+            <a href="index.html" class="text-xs bg-slate-800 hover:bg-slate-700 font-bold px-3 py-2 rounded-xl transition">⬅️ HUB</a>
+        </div>
+
+        <div class="mb-4 text-sm font-bold text-gray-400">
+            I tuoi GreyCoins: <span id="slot-coins" class="text-amber-400 font-black text-lg">500</span> 🪙
+        </div>
+
+        <div class="grid grid-cols-3 gap-4 w-full mb-6">
+            <div id="reel-0" class="slot-box h-28 rounded-2xl text-5xl font-black flex items-center justify-center shadow-inner">🍒</div>
+            <div id="reel-1" class="slot-box h-28 rounded-2xl text-5xl font-black flex items-center justify-center shadow-inner">🍒</div>
+            <div id="reel-2" class="slot-box h-28 rounded-2xl text-5xl font-black flex items-center justify-center shadow-inner">🍒</div>
+        </div>
+
+        <div class="mb-6 text-xs text-gray-400 font-medium tracking-wide">
+            Costo di ogni spin: <span class="text-red-400 font-bold">50 GreyCoins</span>
+        </div>
+
+        <div id="slot-status" class="mb-6 text-sm font-bold text-center text-gray-300 min-h-[20px]">
+            Tenta la fortuna! Prendi 3 simboli uguali per vincere.
+        </div>
+
+        <button onclick="spin()" id="spin-btn" class="w-full py-4 bg-purple-600 hover:bg-purple-500 font-black text-base rounded-xl transition tracking-wider shadow-lg shadow-purple-900/30">
+            TIRA LA LEVA!
+        </button>
+    </div>
+
+    <script>
+        const symbols = ["🍒", "🍋", "🍇", "💎", "⭐", "🍀"];
+        // Sincronizzazione automatica con il sistema centrale di index.html
+        let coins = localStorage.getItem('sys_coins') ? parseInt(localStorage.getItem('sys_coins')) : 500;
+        
+        document.getElementById('slot-coins').innerText = coins;
+
+        function spin() {
+            if (coins < 50) {
+                document.getElementById('slot-status').innerText = "❌ Monete insufficienti! Torna all'Hub per ricaricare.";
+                return;
+            }
+
+            // Scala il costo della giocata
+            coins -= 50;
+            saveCoins();
+            document.getElementById('slot-status').innerText = "I rulli stanno girando...";
+            
+            let btn = document.getElementById('spin-btn');
+            btn.disabled = true;
+            btn.classList.add('opacity-50');
+
+            let intervals = [];
+
+            // Effetto rotazione rulli
+            for(let i=0; i<3; i++) {
+                intervals[i] = setInterval(() => {
+                    let randSymbol = symbols[Math.floor(Math.random() * symbols.length)];
+                    document.getElementById(`reel-${i}`).innerText = randSymbol;
+                }, 100 + (i * 100));
+            }
+
+            // Ferma i rulli uno alla volta per suspense
+            setTimeout(() => { clearInterval(intervals[0]); }, 800);
+            setTimeout(() => { clearInterval(intervals[1]); }, 1400);
+            setTimeout(() => { 
+                clearInterval(intervals[2]); 
+                evaluateResult();
+                btn.disabled = false;
+                btn.classList.remove('opacity-50');
+            }, 2000);
+        }
+
+        function evaluateResult() {
+            let r0 = document.getElementById('reel-0').innerText;
+            let r1 = document.getElementById('reel-1').innerText;
+            let r2 = document.getElementById('reel-2').innerText;
+
+            let status = document.getElementById('slot-status');
+
+            if (r0 === r1 && r1 === r2) {
+                let prize = 500; 
+                if (r0 === "💎") prize = 1500; 
+                if (r0 === "⭐") prize = 1000;
+                
+                coins += prize;
+                status.innerHTML = `🎉 CLAMOROSO! TRIPLICE ${r0}! Hai vinto <span class="text-green-400 font-black">${prize} GreyCoins</span>!`;
+            } else if (r0 === r1 || r1 === r2 || r0 === r2) {
+                coins += 70; 
+                status.innerHTML = `✨ Coppia! Hai vinto <span class="text-blue-400 font-bold">70 GreyCoins</span>!`;
+            } else {
+                status.innerText = "😢 Nessuna combinazione. Ritenta!";
+            }
+
+            saveCoins();
+        }
+
+        function saveCoins() {
+            // Aggiorna tutte le chiavi di memoria possibili per evitare disallineamenti con l'index
+            localStorage.setItem('sys_coins', coins);
+            localStorage.setItem('greyCoins', coins);
+            document.getElementById('slot-coins').innerText = coins;
+        }
+    </script>
+</body>
+</html>
