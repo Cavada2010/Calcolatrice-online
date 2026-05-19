@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tris Arena - Gaming Hub</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <style>
+        body { background-color: #0b0f19; color: #f9fafb; font-family: system-ui, sans-serif; }
+        .cell { background-color: #151f32; transition: all 0.2s ease; }
+        .cell:hover { background-color: #1e293b; }
+    </style>
+</head>
+<body class="flex flex-col h-screen w-screen items-center justify-center p-4">
+
+    <div class="w-full max-w-[450px] bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-2xl flex flex-col items-center">
+        
+        <div class="w-full flex justify-between items-center mb-6">
+            <h1 class="text-2xl font-black text-blue-500 tracking-wider">❌ TRIS ARENA ⭕</h1>
+            <a href="index.html" class="text-xs bg-slate-800 hover:bg-slate-700 font-bold px-3 py-2 rounded-xl transition">⬅️ HUB</a>
+        </div>
+
+        <div id="status-display" class="mb-6 text-lg font-bold text-gray-300 tracking-wide bg-slate-950/50 px-6 py-2 rounded-full border border-slate-800/60">
+            Turno del giocatore: <span class="text-blue-400 font-black">X</span>
+        </div>
+
+        <div class="grid grid-cols-3 gap-3 w-full aspect-square mb-6">
+            <button onclick="makeMove(0)" id="cell-0" class="cell rounded-2xl text-4xl font-black flex items-center justify-center outline-none"></button>
+            <button onclick="makeMove(1)" id="cell-1" class="cell rounded-2xl text-4xl font-black flex items-center justify-center outline-none"></button>
+            <button onclick="makeMove(2)" id="cell-2" class="cell rounded-2xl text-4xl font-black flex items-center justify-center outline-none"></button>
+            
+            <button onclick="makeMove(3)" id="cell-3" class="cell rounded-2xl text-4xl font-black flex items-center justify-center outline-none"></button>
+            <button onclick="makeMove(4)" id="cell-4" class="cell rounded-2xl text-4xl font-black flex items-center justify-center outline-none"></button>
+            <button onclick="makeMove(5)" id="cell-5" class="cell rounded-2xl text-4xl font-black flex items-center justify-center outline-none"></button>
+            
+            <button onclick="makeMove(6)" id="cell-6" class="cell rounded-2xl text-4xl font-black flex items-center justify-center outline-none"></button>
+            <button onclick="makeMove(7)" id="cell-7" class="cell rounded-2xl text-4xl font-black flex items-center justify-center outline-none"></button>
+            <button onclick="makeMove(8)" id="cell-8" class="cell rounded-2xl text-4xl font-black flex items-center justify-center outline-none"></button>
+        </div>
+
+        <button onclick="resetBoard()" class="w-full py-3 bg-blue-600 hover:bg-blue-500 font-black text-sm rounded-xl transition tracking-wider">
+            RESTART MATCH
+        </button>
+    </div>
+
+    <script>
+        let board = ["", "", "", "", "", "", "", "", ""];
+        let currentPlayer = "X"; // X inizia sempre
+        let isGameActive = true;
+
+        const winningConditions = [
+            [0, 1, 2], [3, 4, 5], [6, 7, 8], // Orizzontali
+            [0, 3, 6], [1, 4, 7], [2, 5, 8], // Verticali
+            [0, 4, 8], [2, 4, 6]             // Diagonali
+        ];
+
+        function makeMove(index) {
+            if (board[index] !== "" || !isGameActive) return;
+
+            board[index] = currentPlayer;
+            let cell = document.getElementById(`cell-${index}`);
+            cell.innerText = currentPlayer;
+            
+            // Colora il testo in base al segno
+            if(currentPlayer === "X") {
+                cell.classList.add("text-blue-500");
+            } else {
+                cell.classList.add("text-red-500");
+            }
+
+            checkResult();
+        }
+
+        function checkResult() {
+            let roundWon = false;
+
+            for (let i = 0; i < winningConditions.length; i++) {
+                const winCondition = winningConditions[i];
+                let a = board[winCondition[0]];
+                let b = board[winCondition[1]];
+                let c = board[winCondition[2]];
+
+                if (a === "" || b === "" || c === "") {
+                    continue;
+                }
+                if (a === b && b === c) {
+                    roundWon = true;
+                    break;
+                }
+            }
+
+            let statusDisplay = document.getElementById("status-display");
+
+            if (roundWon) {
+                statusDisplay.innerHTML = `🎉 Giocatore <span class="${currentPlayer === 'X' ? 'text-blue-400' : 'text-red-400'} font-black">${currentPlayer}</span> HA VINTO!`;
+                isGameActive = false;
+                return;
+            }
+
+            // Controllo Pareggio
+            let roundDraw = !board.includes("");
+            if (roundDraw) {
+                statusDisplay.innerText = "🤝 Pareggio perfetto!";
+                isGameActive = false;
+                return;
+            }
+
+            // Cambia turno
+            currentPlayer = currentPlayer === "X" ? "O" : "X";
+            statusDisplay.innerHTML = `Turno del giocatore: <span class="${currentPlayer === 'X' ? 'text-blue-400' : 'text-red-400'} font-black">${currentPlayer}</span>`;
+        }
+
+        function resetBoard() {
+            board = ["", "", "", "", "", "", "", "", ""];
+            isGameActive = true;
+            currentPlayer = "X";
+            document.getElementById("status-display").innerHTML = `Turno del giocatore: <span class="text-blue-400 font-black">X</span>`;
+            
+            for (let i = 0; i < 9; i++) {
+                let cell = document.getElementById(`cell-${i}`);
+                cell.innerText = "";
+                cell.className = "cell rounded-2xl text-4xl font-black flex items-center justify-center outline-none";
+            }
+        }
+    </script>
+</body>
+</html>
