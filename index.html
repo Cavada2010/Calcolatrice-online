@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gaming Hub Ultimate 2026</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <style>
+        body { background-color: #0b0f19; color: #f9fafb; font-family: system-ui, sans-serif; }
+    </style>
+</head>
+<body class="flex h-screen w-screen items-center justify-center p-4 overflow-hidden">
+
+    <div id="calc-gate" class="w-full max-w-[380px] rounded-3xl bg-white p-6 shadow-2xl text-gray-800 transition-all duration-500">
+        <div id="calc-screen" class="mb-4 h-20 rounded-2xl bg-gray-100 p-4 text-right text-3xl font-bold flex items-center justify-end overflow-hidden">0</div>
+        <div class="grid grid-cols-4 gap-3">
+            <button onclick="pressCalc('C')" class="h-16 rounded-2xl bg-gray-200 hover:bg-gray-300 text-xl font-bold transition">C</button>
+            <button onclick="pressCalc('/')" class="h-16 rounded-2xl bg-gray-200 hover:bg-gray-300 text-xl font-bold transition">/</button>
+            <button onclick="pressCalc('*')" class="h-16 rounded-2xl bg-gray-200 hover:bg-gray-300 text-xl font-bold transition">*</button>
+            <button onclick="pressCalc('-')" class="h-16 rounded-2xl bg-gray-200 hover:bg-gray-300 text-xl font-bold transition">-</button>
+            
+            <button onclick="pressCalc('7')" class="h-16 rounded-2xl bg-gray-100 hover:bg-gray-200 text-xl font-bold transition">7</button>
+            <button onclick="pressCalc('8')" class="h-16 rounded-2xl bg-gray-100 hover:bg-gray-200 text-xl font-bold transition">8</button>
+            <button onclick="pressCalc('9')" class="h-16 rounded-2xl bg-gray-100 hover:bg-gray-200 text-xl font-bold transition">9</button>
+            <button onclick="pressCalc('+')" class="h-16 rounded-2xl bg-gray-200 hover:bg-gray-300 text-xl font-bold transition">+</button>
+            
+            <button onclick="pressCalc('4')" class="h-16 rounded-2xl bg-gray-100 hover:bg-gray-200 text-xl font-bold transition">4</button>
+            <button onclick="pressCalc('5')" class="h-16 rounded-2xl bg-gray-100 hover:bg-gray-200 text-xl font-bold transition">5</button>
+            <button onclick="pressCalc('6')" class="h-16 rounded-2xl bg-gray-100 hover:bg-gray-200 text-xl font-bold transition">6</button>
+            <button onclick="pressCalc('=')" class="h-16 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white text-xl font-bold transition col-span-1 row-span-2 flex items-center justify-center">=</button>
+            
+            <button onclick="pressCalc('1')" class="h-16 rounded-2xl bg-gray-100 hover:bg-gray-200 text-xl font-bold transition">1</button>
+            <button onclick="pressCalc('2')" class="h-16 rounded-2xl bg-gray-100 hover:bg-gray-200 text-xl font-bold transition">2</button>
+            <button onclick="pressCalc('3')" class="h-16 rounded-2xl bg-gray-100 hover:bg-gray-200 text-xl font-bold transition">3</button>
+            
+            <button onclick="pressCalc('0')" class="p-4 rounded-2xl bg-gray-100 hover:bg-gray-200 text-xl font-bold transition col-span-3 text-left pl-7">0</button>
+        </div>
+        <p class="text-[11px] text-center text-gray-400 mt-4 tracking-wide font-medium">DIGITA IL CODICE DI ACCESSO E PREMI =</p>
+    </div>
+
+    <div id="main-platform" class="hidden w-full h-full flex overflow-hidden opacity-0 transition-all duration-700">
+        
+        <div class="w-80 border-r flex flex-col p-4 space-y-4 bg-slate-900 border-slate-800">
+            <div class="flex items-center space-x-3 p-2 border-b border-slate-800">
+                <span class="text-3xl">👑</span>
+                <div>
+                    <h3 id="p-name" class="font-black text-lg text-white">Player</h3>
+                    <p class="text-xs text-gray-400">🪙 GreyCoins: <span id="p-coins">500</span></p>
+                </div>
+            </div>
+            
+            <div class="flex-1 flex flex-col border border-slate-800 rounded-2xl overflow-hidden bg-slate-950/50">
+                <div class="p-2.5 border-b border-slate-800 text-[11px] font-black text-gray-400">💬 CHAT GLOBALE REAL-TIME</div>
+                <div id="chat-box" class="flex-1 p-2.5 overflow-y-auto space-y-1.5 text-xs text-gray-300">
+                    <div><strong class="text-blue-400">⚙️ Server:</strong> Benvenuto nell'arena! Chat crittografata attiva.</div>
+                </div>
+                <form onsubmit="sendMsg(event)" class="p-1.5 border-t border-slate-800 flex bg-slate-950">
+                    <input type="text" id="chat-in" class="flex-1 p-2 text-xs bg-transparent outline-none text-white" placeholder="Scrivi un messaggio..." autocomplete="off">
+                </form>
+            </div>
+        </div>
+
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <div class="h-16 border-b border-slate-800 bg-slate-900 flex items-center justify-between px-6">
+                <h1 class="text-xl font-black text-blue-500 tracking-wider">🎮 GAMING HUB 2026</h1>
+                <button onclick="resetCoins()" class="text-xs bg-amber-500 hover:bg-amber-400 text-black font-black px-4 py-2 rounded-full transition">RICARICA MONETE (Se a 0)</button>
+            </div>
+
+            <div class="flex-1 p-6 overflow-y-auto">
+                <h2 class="text-lg font-bold mb-4 text-gray-400">SELEZIONA UN GIOCO DALL'ARENA:</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    
+                    <div class="bg-slate-900 p-5 rounded-2xl border border-slate-800 hover:border-blue-500 transition flex flex-col justify-between">
+                        <div>
+                            <span class="text-3xl">❌</span>
+                            <h3 class="font-bold text-lg mt-2">Tris P2P</h3>
+                            <p class="text-xs text-gray-400 mt-1">Sfida un amico in locale o testa la tua strategia.</p>
+                        </div>
+                        <a href="tris.html" class="mt-4 block text-center text-xs bg-blue-600 hover:bg-blue-500 font-bold py-2 rounded-xl transition">GIOCA ORA</a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        let calcInput = '';
+        let username = "Player1";
+        let coins = 500;
+
+        function pressCalc(val) {
+            let screen = document.getElementById('calc-screen');
+            if (val === 'C') { calcInput = ''; screen.innerText = '0'; }
+            else if (val === '=') {
+                if (calcInput === '67') {
+                    document.getElementById('calc-gate').remove();
+                    let plat = document.getElementById('main-platform');
+                    plat.classList.remove('hidden');
+                    setTimeout(() => { plat.classList.add('opacity-100'); }, 50);
+                    setupUser();
+                } else {
+                    try { calcInput = eval(calcInput).toString(); screen.innerText = calcInput; }
+                    catch { screen.innerText = 'Error'; calcInput = ''; }
+                }
+            } else { calcInput += val; screen.innerText = calcInput; }
+        }
+
+        function setupUser() {
+            let res = prompt("Scegli il tuo Username per la classifica:", "Player1");
+            if(res && res.trim() !== "") username = res.trim();
+            document.getElementById('p-name').innerText = username;
+            document.getElementById('p-coins').innerText = coins;
+        }
+
+        function sendMsg(e) {
+            e.preventDefault();
+            let inp = document.getElementById('chat-in');
+            if(!inp.value.trim()) return;
+            let box = document.getElementById('chat-box');
+            box.innerHTML += `<div><strong class="text-green-400">👑 ${username}:</strong> ${inp.value.trim()}</div>`;
+            inp.value = '';
+            box.scrollTop = box.scrollHeight;
+        }
+
+        function resetCoins() {
+            if(coins <= 0) {
+                coins = 500;
+                document.getElementById('p-coins').innerText = coins;
+                alert("Saldo ricaricato con successo!");
+            } else {
+                alert("Puoi ricaricare solo se hai terminato le monete!");
+            }
+        }
+    </script>
+</body>
+</html>
