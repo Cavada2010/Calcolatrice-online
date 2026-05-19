@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Il Muro - Gaming Hub</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <style>
+        body { background-color: #0b0f19; color: #f9fafb; font-family: system-ui, sans-serif; }
+        .board-grid { display: grid; grid-template-columns: repeat(9, minmax(0, 1fr)); gap: 4px; }
+        .cell-board { aspect-ratio: 1; background-color: #151f32; transition: all 0.2s; }
+        .wall-h { height: 8px; background-color: #1f2937; cursor: pointer; transition: background 0.2s; }
+        .wall-v { width: 8px; background-color: #1f2937; cursor: pointer; transition: background 0.2s; }
+        .wall-active { background-color: #ef4444 !important; shadow: 0 0 10px #ef4444; }
+        .wall-preview { background-color: #3b82f6 !important; }
+    </style>
+</head>
+<body class="flex flex-col h-screen w-screen items-center justify-center p-4 overflow-hidden">
+
+    <div class="w-full max-w-[600px] bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-2xl flex flex-col items-center">
+        
+        <div class="w-full flex justify-between items-center mb-4">
+            <div>
+                <h1 class="text-xl font-black text-blue-500 tracking-wider">🧱 IL MURO (QUORIDOR 9x9)</h1>
+                <p class="text-[10px] text-gray-400">Raggiungi il lato opposto. I muri non possono tappare completamente la via.</p>
+            </div>
+            <a href="index.html" class="text-xs bg-slate-800 hover:bg-slate-700 font-bold px-3 py-2 rounded-xl transition shrink-0">⬅️ HUB</a>
+        </div>
+
+        <div class="w-full grid grid-cols-2 gap-2 mb-4 text-xs font-mono bg-slate-950/60 p-3 rounded-xl border border-slate-800/60 text-center">
+            <div>Turno: <span id="turn-display" class="text-blue-400 font-bold">GIOCATORE 1 (Blu)</span></div>
+            <div>Muri Rimanenti: <span id="walls-count" class="text-red-400 font-bold">P1: 10 | P2: 10</span></div>
+        </div>
+
+        <div class="w-full flex space-x-2 mb-4">
+            <button id="mode-move" onclick="setMode('move')" class="flex-1 py-2 rounded-xl text-xs font-black bg-blue-600 text-white uppercase tracking-wider">Muovi Pedina</button>
+            <button id="mode-wall" onclick="setMode('wall')" class="flex-1 py-2 rounded-xl text-xs font-black bg-slate-800 text-gray-400 hover:text-white uppercase tracking-wider">Piazza Muro</button>
+        </div>
+
+        <div class="w-full bg-slate-950 p-3 rounded-2xl border border-slate-800/80 relative">
+            <div id="board-container" class="w-full grid" style="grid-template-columns: repeat(9, 1fr); gap: 8px;">
+                </div>
+        </div>
+
+        <div class="w-full mt-4 grid grid-cols-2 gap-3">
+            <button onclick="cancelPending()" class="py-2.5 bg-slate-800 hover:bg-slate-700 font-bold text-xs rounded-xl transition text-gray-300">ANNULLA SELEZIONE</button>
+            <button onclick="confirmAction()" class="py-2.5 bg-green-600 hover:bg-green-500 font-black text-xs rounded-xl transition tracking-wider text-white">CONFERMA MOSSA</button>
+        </div>
+    </div>
+
+    <script>
+        // Configurazione e Stato Iniziale del Gioco
+        let p1 = { x: 4, y: 0, walls: 10, targetY: 8, color: '#3b82f6', char: '🔷' };
+        let p2 = { x: 4, y: 8, walls: 10, targetY: 0, color: '#f59e0b', char: '🔶' };
+        let currentTurn = 1; // 1 = P1, 2 = P2
+        let currentMode = 'move'; // 'move' o 'wall'
+        
+        // Strutture dati stabili per la griglia
+        let horizontalWalls = Array(8).fill().map(() => Array(8).fill(false));
+        let verticalWalls = Array(8).fill().map(() => Array(8).fill(false));
+        
+        // Mossa temporanea prima del tasto "Conferma"
+        let pendingAction = null; 
+
+        function initBoard() {
+            let container = document.getElementById('board-container');
+            container.innerHTML = '';
+            
+            for (let y = 0; y < 9; y++) {
+                for (let x = 0; x < 9; x++) {
+                    let cell = document.createElement('div');
+                    cell.className = "cell-board rounded-lg flex items-center justify-center text-xl cursor-pointer relative";
+                    cell.id = `c-${x}-${y}`;
+                    cell.onclick = () => handleCellClick(x, y);
+                    
+                    if(p1.x === x && p1.y === y) cell.innerText = p1.char;
+                    if(p2.x === x && p2.y === y) cell.innerText = p2.char;
+                    
+                    // Disegna overlay grafici per i muri posizionati sui bordi destre e inferiori
+                    appendWallOverlays(cell, x, y);
+                    
+                    container.appendChild(cell);
+                }
+            }
+            updateUI();
+        }
+
+        function appendWallOverlays(cell, x, y) {
+            // Muro Orizzontale Sotto la casella
+            if (y < 8 && x < 8 && horizontalWalls[y][x]) {
+                let w = document.createElement('div');
+                w.className = "absolute bottom-[-6px] left-0 right-[-8px] h-[4px] bg-red-500 z-10 rounded";
+                cell.appendChild(w);
+            }
+            // Muro Verticale a Destra della casella
+            if (x < 8 && y < 8 && verticalWalls[y][x]) {
+                let w = document.createElement('div');
+                w.className = "absolute right-[-6px] top-0 bottom-[-8px] width-[4px] bg-red-500 z-10 rounded";
+                w.style.width = "4px";
+                cell.appendChild(w);
+            }
+        }
+
+        function setMode(mode) {
+            currentMode = mode;
+            document.getElementById('mode-move').className = mode === 'move' ? "flex-1 py-2 rounded-xl text-xs font-black bg-blue-600 text-white uppercase tracking-wider" : "flex-1 py-2 rounded-xl text-xs font-black bg-slate-800 text-gray-400 hover:text-white uppercase tracking-wider";
+            document.getElementById('mode-wall').className = mode === 'wall' ? "flex-1 py-2 rounded-xl text-xs font-black bg-blue-600 text-white uppercase tracking-wider" : "flex-1 py-2 rounded-xl text-xs font-black bg-slate-800 text-gray-400 hover:text-white uppercase tracking-wider";
+            cancelPending();
+        }
+
+        function handleCellClick(x, y) {
+            let activeP = currentTurn === 1 ? p1 : p2;
+            
+            if (currentMode === 'move') {
+                // Controllo mossa adiacente di 1 casella (Orizzontale o Verticale)
+                let dist = Math.abs(x - activeP.x) + Math.abs(y - activeP.y);
+                if (dist === 1) {
+                    if (isWallBlocking(activeP.x, activeP.y, x, y)) {
+                        alert("Mossa bloccata da un muro!");
+                        return;
+                    }
+                    cancelPending();
+                    pendingAction = { type: 'move', x: x, y: y };
+                    document.getElementById(`c-${x}-${y}`).classList.add('bg-blue-900/40');
+                }
+            } else if (currentMode === 'wall') {
+                if (activeP.walls <= 0) { alert("Hai esaurito i tuoi muri disponibili!"); return; }
+                if (x >= 8 || y >= 8) { alert("Seleziona una casella interna (non l'ultimo bordo destro/inferiore) per posizionare un blocco 2x1."); return; }
+                
+                let type = prompt("Inserisci 'H' per muro Orizzontale o 'V' per Verticale:", "H");
+                if (!type) return;
+                type = type.toUpperCase();
+
+                if (type === 'H') {
+                    if (horizontalWalls[y][x] || (x > 0 && horizontalWalls[y][x-1]) || (x < 7 && horizontalWalls[y][x+1])) {
+                        alert("Muro sovrapposto o adiacente non valido!"); return;
+                    }
+                    cancelPending();
+                    pendingAction = { type: 'wall_h', x: x, y: y };
+                } else if (type === 'V') {
+                    if (verticalWalls[y][x] || (y > 0 && verticalWalls[y-1][x]) || (y < 7 && verticalWalls[y+1][x])) {
+                        alert("Muro sovrapposto o adiacente non valido!"); return;
+                    }
+                    cancelPending();
+                    pendingAction = { type: 'wall_v', x: x, y: y };
+                }
+                alert("Muro piazzato in anteprima. Clicca 'CONFERMA MOSSA' per attivare l'algoritmo BFS di controllo.");
+            }
+        }
+
+        function isWallBlocking(fx, fy, tx, ty) {
+            if (fy === ty) { // Movimento Orizzontale
+                let minX = Math.min(fx, tx);
+                if (minX < 8 && fy < 8 && verticalWalls[fy][minX]) return true;
+                if (minX < 8 && fy > 0 && verticalWalls[fy-1][minX]) return true;
+            } else if (fx === tx) { // Movimento Verticale
+                let minY = Math.min(fy, ty);
+                if (minY < 8 && fx < 8 && horizontalWalls[minY][fx]) return true;
+                if (minY < 8 && fx > 0 && horizontalWalls[minY][fx-1]) return true;
+            }
+            return false;
+        }
+
+        function cancelPending() {
+            pendingAction = null;
+            initBoard();
+        }
+
+        // ==========================================
+        // ALGORITMO DI VERIFICA BFS INTEGRATO LATO CLIENT
+        // ==========================================
+        function checkPathBFS(player, p1Pos, p2Pos) {
+            let queue = [{ x: player.x, y: player.y }];
+            let visited = new Set();
+            visited.add(`${player.x},${player.y}`);
+
+            while (queue.length > 0) {
+                let curr = queue.shift();
+                if (curr.y === player.targetY) return true; // Percorso trovato con successo!
+
+                // Controllo i 4 vicini standard
+                let directions = [{x:0, y:-1}, {x:0, y:1}, {x:-1, y:0}, {x:1, y:0}];
+                for (let d of directions) {
+                    let nx = curr.x + d.x;
+                    let ny = curr.y + d.y;
+                    
+                    if (nx >= 0 && nx < 9 && ny >= 0 && ny < 9) {
+                        if (!visited.has(`${nx},${ny}`)) {
+                            if (!isWallBlocking(curr.x, curr.y, nx, ny)) {
+                                visited.add(`${nx},${ny}`);
+                                queue.push({ x: nx, y: ny });
+                            }
+                        }
+                    }
+                }
+            }
+            return false; // Nessun percorso disponibile!
+        }
+
+        function confirmAction() {
+            if (!pendingAction) { alert("Nessuna azione selezionata!"); return; }
+
+            if (pendingAction.type === 'move') {
+                if(currentTurn === 1) { p1.x = pendingAction.x; p1.y = pendingAction.y; }
+                else { p2.x = pendingAction.x; p2.y = pendingAction.y; }
+            } 
+            else if (pendingAction.type === 'wall_h' || pendingAction.type === 'wall_v') {
+                // Applica il muro temporaneamente per il test BFS
+                if (pendingAction.type === 'wall_h') horizontalWalls[pendingAction.y][pendingAction.x] = true;
+                if (pendingAction.type === 'wall_v') verticalWalls[pendingAction.y][pendingAction.x] = true;
+
+                // Esegui algoritmo BFS protettivo
+                let p1Valid = checkPathBFS(p1);
+                let p2Valid = checkPathBFS(p2);
+
+                if (!p1Valid || !p2Valid) {
+                    // Mossa illegale: Ripristina e cancella
+                    if (pendingAction.type === 'wall_h') horizontalWalls[pendingAction.y][pendingAction.x] = false;
+                    if (pendingAction.type === 'wall_v') verticalWalls[pendingAction.y][pendingAction.x] = false;
+                    alert("❌ MOSSA RIFIUTATA: Questo muro azzera i percorsi liberi per raggiungere il traguardo!");
+                    cancelPending();
+                    return;
+                }
+
+                // Sottrai il muro confermato
+                if (currentTurn === 1) p1.walls--;
+                else p2.walls--;
+            }
+
+            // Controllo della Linea di Fondo (Condizione di Vittoria)
+            if (p1.y === p1.targetY) { alert("🎉 GIOCATORE 1 VINCE IL MATCH!"); resetGame(); return; }
+            if (p2.y === p2.targetY) { alert("🎉 GIOCATORE 2 VINCE IL MATCH!"); resetGame(); return; }
+
+            // Cambio turno
+            currentTurn = currentTurn === 1 ? 2 : 1;
+            pendingAction = null;
+            initBoard();
+        }
+
+        function updateUI() {
+            document.getElementById('turn-display').innerText = currentTurn === 1 ? "GIOCATORE 1 (Blu)" : "GIOCATORE 2 (Arancio)";
+            document.getElementById('turn-display').style.color = currentTurn === 1 ? p1.color : p2.color;
+            document.getElementById('walls-count').innerText = `P1: ${p1.walls} | P2: ${p2.walls}`;
+        }
+
+        function resetGame() {
+            p1 = { x: 4, y: 0, walls: 10, targetY: 8, color: '#3b82f6', char: '🔷' };
+            p2 = { x: 4, y: 8, walls: 10, targetY: 0, color: '#f59e0b', char: '🔶' };
+            currentTurn = 1;
+            horizontalWalls = Array(8).fill().map(() => Array(8).fill(false));
+            verticalWalls = Array(8).fill().map(() => Array(8).fill(false));
+            pendingAction = null;
+            initBoard();
+        }
+
+        // Avvio iniziale della scacchiera
+        initBoard();
+    </script>
+</body>
+</html>
