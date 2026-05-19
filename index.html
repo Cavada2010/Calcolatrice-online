@@ -3,16 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gaming Hub Ultimate 2026</title>
+    <title>Gaming Hub Ultimate 2026 - Official Platform</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <style>
         body { background-color: #0b0f19; color: #f9fafb; font-family: system-ui, sans-serif; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #0b0f19; }
+        ::-webkit-scrollbar-thumb { background: #1f2937; border-radius: 10px; }
     </style>
 </head>
-<body class="flex h-screen w-screen items-center justify-center p-4 overflow-hidden">
+<body class="flex h-screen w-screen items-center justify-center p-4 overflow-hidden select-none">
 
-    <div id="calc-gate" class="w-full max-w-[380px] rounded-3xl bg-white p-6 shadow-2xl text-gray-800 transition-all duration-500">
-        <div id="calc-screen" class="mb-4 h-20 rounded-2xl bg-gray-100 p-4 text-right text-3xl font-bold flex items-center justify-end overflow-hidden">0</div>
+    <div id="calc-gate" class="w-full max-w-[380px] rounded-3xl bg-white p-6 shadow-2xl text-gray-800 transition-all duration-500 z-50">
+        <div id="calc-screen" class="mb-4 h-20 rounded-2xl bg-gray-100 p-4 text-right text-3xl font-bold flex items-center justify-end overflow-hidden font-mono tracking-tight">0</div>
         <div class="grid grid-cols-4 gap-3">
             <button onclick="pressCalc('C')" class="h-16 rounded-2xl bg-gray-200 hover:bg-gray-300 text-xl font-bold transition">C</button>
             <button onclick="pressCalc('/')" class="h-16 rounded-2xl bg-gray-200 hover:bg-gray-300 text-xl font-bold transition">/</button>
@@ -35,61 +38,78 @@
             
             <button onclick="pressCalc('0')" class="p-4 rounded-2xl bg-gray-100 hover:bg-gray-200 text-xl font-bold transition col-span-3 text-left pl-7">0</button>
         </div>
-        <p class="text-[11px] text-center text-gray-400 mt-4 tracking-wide font-medium">DIGITA IL CODICE DI ACCESSO E PREMI =</p>
+        <p class="text-[11px] text-center text-gray-400 mt-4 tracking-wide font-black uppercase">SBLOCCO CON CODICE PRIVATO AMMINISTRATORE</p>
     </div>
 
     <div id="main-platform" class="hidden w-full h-full flex overflow-hidden opacity-0 transition-all duration-700">
         
-        <div class="w-80 border-r flex flex-col p-4 space-y-4 bg-slate-900 border-slate-800">
+        <div class="w-80 border-r flex flex-col p-4 space-y-4 bg-slate-900 border-slate-800 shrink-0">
             <div class="flex items-center space-x-3 p-2 border-b border-slate-800">
-                <span class="text-3xl">👑</span>
-                <div>
-                    <h3 id="p-name" class="font-black text-lg text-white">Player</h3>
-                    <p class="text-xs text-gray-400">🪙 GreyCoins: <span id="p-coins">500</span></p>
+                <span id="p-avatar" class="text-3xl">👑</span>
+                <div class="overflow-hidden">
+                    <h3 id="p-name" class="font-black text-lg text-white truncate">Player</h3>
+                    <div class="text-xs text-gray-400 space-y-0.5">
+                        <p>🪙 Saldo: <span id="p-coins" class="text-amber-400 font-bold">500</span></p>
+                        <p>🏆 Trofei: <span id="p-trophies" class="text-blue-400 font-bold">0</span></p>
+                    </div>
                 </div>
             </div>
             
-            <div class="flex-1 flex flex-col border border-slate-800 rounded-2xl overflow-hidden bg-slate-950/50">
-                <div class="p-2.5 border-b border-slate-800 text-[11px] font-black text-gray-400">💬 CHAT GLOBALE REAL-TIME</div>
-                <div id="chat-box" class="flex-1 p-2.5 overflow-y-auto space-y-1.5 text-xs text-gray-300">
-                    <div><strong class="text-blue-400">⚙️ Server:</strong> Benvenuto nell'arena! Chat crittografata attiva.</div>
+            <div class="flex-1 flex flex-col border border-slate-800 rounded-2xl overflow-hidden bg-slate-950/40">
+                <div class="p-2.5 border-b border-slate-800 text-[11px] font-black text-gray-400 tracking-wider">💬 CHAT GLOBALE CORE</div>
+                <div id="chat-box" class="flex-1 p-2.5 overflow-y-auto space-y-1.5 text-xs text-gray-300 font-medium">
+                    <div class="opacity-60"><strong class="text-blue-500">⚙️ System:</strong> Rete crittografata Supabase pronta.</div>
                 </div>
                 <form onsubmit="sendMsg(event)" class="p-1.5 border-t border-slate-800 flex bg-slate-950">
-                    <input type="text" id="chat-in" class="flex-1 p-2 text-xs bg-transparent outline-none text-white" placeholder="Scrivi un messaggio..." autocomplete="off">
+                    <input type="text" id="chat-in" class="flex-1 p-2 text-xs bg-transparent outline-none text-white placeholder-gray-600" placeholder="Invia pacchetto di testo..." autocomplete="off">
                 </form>
             </div>
         </div>
 
-        <div class="flex-1 flex flex-col overflow-hidden">
-            <div class="h-16 border-b border-slate-800 bg-slate-900 flex items-center justify-between px-6">
-                <h1 class="text-xl font-black text-blue-500 tracking-wider">🎮 GAMING HUB 2026</h1>
-                <button onclick="resetCoins()" class="text-xs bg-amber-500 hover:bg-amber-400 text-black font-black px-4 py-2 rounded-full transition">RICARICA MONETE (Se a 0)</button>
-            </div>
-
-            <div class="flex-1 p-6 overflow-y-auto">
-                <h2 class="text-lg font-bold mb-4 text-gray-400">SELEZIONA UN GIOCO DALL'ARENA:</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    
-                    <div class="bg-slate-900 p-5 rounded-2xl border border-slate-800 hover:border-blue-500 transition flex flex-col justify-between">
-                        <div>
-                            <span class="text-3xl">❌</span>
-                            <h3 class="font-bold text-lg mt-2">Tris P2P</h3>
-                            <p class="text-xs text-gray-400 mt-1">Sfida un amico in locale o testa la tua strategia.</p>
-                        </div>
-                        <a href="tris.html" class="mt-4 block text-center text-xs bg-blue-600 hover:bg-blue-500 font-bold py-2 rounded-xl transition">GIOCA ORA</a>
-                    </div>
-
+        <div class="flex-1 flex flex-col overflow-hidden bg-slate-950/20">
+            <div class="h-16 border-b border-slate-800 bg-slate-900 flex items-center justify-between px-6 shrink-0">
+                <div class="flex space-x-6 text-xs font-black tracking-widest">
+                    <button id="tab-btn-games" onclick="switchView('games')" class="text-blue-500 transition border-b-2 border-blue-500 pb-5 pt-5">LOBBY ARENA</button>
+                    <button id="tab-btn-shop" onclick="switchView('shop')" class="text-gray-400 hover:text-white transition pb-5 pt-5">SHOP MASSIVO</button>
+                    <button id="tab-btn-trophy" onclick="switchView('trophy')" class="text-gray-400 hover:text-white transition pb-5 pt-5">TROPHY ROAD</button>
                 </div>
+                <button onclick="claimDailyBonus()" class="text-xs bg-amber-500 hover:bg-amber-400 text-black font-black px-4 py-2 rounded-full transition shadow-md shadow-amber-500/10">DAILY RESET</button>
             </div>
+
+            <div id="view-container" class="flex-1 p-6 overflow-y-auto">
+                </div>
         </div>
 
     </div>
 
     <script>
         let calcInput = '';
-        let username = "Player1";
-        let coins = 500;
+        let systemData = {
+            username: "Player1",
+            coins: 500,
+            trophies: 0,
+            skin: "👑",
+            inventory: []
+        };
 
+        // Database definitivo e immutabile di tutti i 13 giochi futuri
+        const gamesDatabase = [
+            { id: "tris", name: "Tris P2P Multi-match", icon: "❌", desc: "Sfida locale strategica con tabellone azzerabile.", url: "tris.html", status: "attivo" },
+            { id: "slot", name: "Cyber Slot Machine", icon: "🎰", desc: "Scommetti i GreyCoins nel generatore di Jackpot.", url: "slot.html", status: "attivo" },
+            { id: "snake", name: "Retro Snake Classic", icon: "🐍", desc: "Mangia i pixel energetici senza colpire le pareti.", url: "snake.html", status: "futuro" },
+            { id: "blackjack", name: "Neo Blackjack 21", icon: "🃏", desc: "Sfida il banco virtuale e raddoppia i tuoi token.", url: "blackjack.html", status: "futuro" },
+            { id: "mines", name: "Crypto Minesweeper", icon: "💣", desc: "Trova i moltiplicatori ed evita le mine nel quadrante.", url: "mines.html", status: "futuro" },
+            { id: "clicker", name: "Quantum Miner Clicker", icon: "⛏️", desc: "Genera monete passive potenziando i server energetici.", url: "miner.html", status: "futuro" },
+            { id: "roulette", name: "Cyberpunk Roulette", icon: "🎡", desc: "Punta sul rosso, nero o numeri secchi dell'arena.", url: "roulette.html", status: "futuro" },
+            { id: "tetris", name: "Block Cascade Retro", icon: "🧱", desc: "Incastra i mattoni geometrici per ripulire le linee.", url: "tetris.html", status: "futuro" },
+            { id: "pong", name: "Laser Pong Arcade", icon: "🏓", desc: "Velocità estrema contro una CPU quantistica infallibile.", url: "pong.html", status: "futuro" },
+            { id: "plinko", name: "Gravity Plinko Drop", icon: "🔺", desc: "Lancia le sfere nella piramide dei moltiplicatori.", url: "plinko.html", status: "futuro" },
+            { id: "crash", name: "Rocket Crash Vector", icon: "🚀", desc: "Incassa prima che il razzo esploda ad alta quota.", url: "crash.html", status: "futuro" },
+            { id: "memory", name: "Neural Memory Matrix", icon: "🧠", desc: "Trova le coppie identiche nel minor tempo possibile.", url: "memory.html", status: "futuro" },
+            { id: "guess", name: "Secret Code Guesser", icon: "🔮", desc: "Indovina il numero atomico generato dal core.", url: "guess.html", status: "futuro" }
+        ];
+
+        // 1. ENGINE DELLA CALCOLATRICE DI ACCESSO
         function pressCalc(val) {
             let screen = document.getElementById('calc-screen');
             if (val === 'C') { calcInput = ''; screen.innerText = '0'; }
@@ -99,7 +119,8 @@
                     let plat = document.getElementById('main-platform');
                     plat.classList.remove('hidden');
                     setTimeout(() => { plat.classList.add('opacity-100'); }, 50);
-                    setupUser();
+                    syncSystemData();
+                    switchView('games');
                 } else {
                     try { calcInput = eval(calcInput).toString(); screen.innerText = calcInput; }
                     catch { screen.innerText = 'Error'; calcInput = ''; }
@@ -107,30 +128,126 @@
             } else { calcInput += val; screen.innerText = calcInput; }
         }
 
-        function setupUser() {
-            let res = prompt("Scegli il tuo Username per la classifica:", "Player1");
-            if(res && res.trim() !== "") username = res.trim();
-            document.getElementById('p-name').innerText = username;
-            document.getElementById('p-coins').innerText = coins;
+        // 2. SINCRONIZZAZIONE DATI PERSISTENTI (LOCALSTORAGE)
+        function syncSystemData() {
+            if(!localStorage.getItem('sys_username')) {
+                let r = prompt("Registra il tuo identificativo nell'arena:", "User_" + Math.floor(Math.random()*900+100));
+                systemData.username = (r && r.trim() !== "") ? r.trim() : "Player1";
+                localStorage.setItem('sys_username', systemData.username);
+                localStorage.setItem('sys_coins', systemData.coins);
+                localStorage.setItem('sys_trophies', systemData.trophies);
+                localStorage.setItem('sys_skin', systemData.skin);
+            } else {
+                systemData.username = localStorage.getItem('sys_username');
+                systemData.coins = parseInt(localStorage.getItem('sys_coins')) || parseInt(localStorage.getItem('greyCoins')) || 500;
+                systemData.trophies = parseInt(localStorage.getItem('sys_trophies')) || 0;
+                systemData.skin = localStorage.getItem('sys_skin') || "👑";
+            }
+            // Allinea vecchie chiavi di sessione
+            localStorage.setItem('greyCoins', systemData.coins);
+            localStorage.setItem('username', systemData.username);
+
+            document.getElementById('p-name').innerText = systemData.username;
+            document.getElementById('p-coins').innerText = systemData.coins;
+            document.getElementById('p-trophies').innerText = systemData.trophies;
+            document.getElementById('p-avatar').innerText = systemData.skin;
         }
 
+        // 3. ROUTER DINAMICO DELLE SCHERMATE (GIOCHI, SHOP, TROFEI)
+        function switchView(target) {
+            let container = document.getElementById('view-container');
+            
+            // Gestione stato pulsanti navbar
+            ['games', 'shop', 'trophy'].forEach(t => {
+                let btn = document.getElementById(`tab-btn-${t}`);
+                if(t === target) {
+                    btn.className = "text-blue-500 border-b-2 border-blue-500 pb-5 pt-5 transition";
+                } else {
+                    btn.className = "text-gray-400 hover:text-white pb-5 pt-5 transition";
+                }
+            });
+
+            // Generazione dinamica dei contenuti
+            if(target === 'games') {
+                container.innerHTML = `
+                    <h2 class="text-sm font-black tracking-widest text-gray-500 mb-6 uppercase">Sistemi di Gioco Rilevati (${gamesDatabase.length})</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        ${gamesDatabase.map(g => `
+                            <div class="bg-slate-900 p-5 rounded-2xl border ${g.status === 'attivo' ? 'border-slate-800 hover:border-blue-500/50' : 'border-slate-900 opacity-40'} transition flex flex-col justify-between">
+                                <div>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-3xl">${g.icon}</span>
+                                        <span class="text-[9px] font-black tracking-wider px-2 py-0.5 rounded-full ${g.status === 'attivo' ? 'bg-green-500/10 text-green-400' : 'bg-gray-500/10 text-gray-400'}">${g.status.toUpperCase()}</span>
+                                    </div>
+                                    <h3 class="font-bold text-base mt-3 text-gray-100">${g.name}</h3>
+                                    <p class="text-xs text-gray-400 mt-1 leading-relaxed">${g.desc}</p>
+                                </div>
+                                <a href="${g.status === 'attivo' ? g.url : '#'}" class="mt-4 block text-center text-xs font-black py-2.5 rounded-xl transition ${g.status === 'attivo' ? 'bg-blue-600 hover:bg-blue-500 text-white' : 'bg-slate-950 text-gray-600 cursor-not-allowed'} uppercase tracking-wider">
+                                    ${g.status === 'attivo' ? 'Lancia Match' : 'In Sviluppo'}
+                                </a>
+                            </div>
+                        `).join('')}
+                    </div>`;
+            } 
+            else if(target === 'shop') {
+                container.innerHTML = `
+                    <h2 class="text-sm font-black tracking-widest text-gray-500 mb-2 uppercase">Mercato Generale Digitale</h2>
+                    <p class="text-xs text-gray-400 mb-6">Usa il tuo capitale per sbloccare personalizzazioni esclusive sul server.</p>
+                    <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl text-center max-w-md mx-auto mt-8">
+                        <span class="text-4xl">🛒</span>
+                        <h3 class="font-black text-lg mt-3">Catalogo in Aggiornamento</h3>
+                        <p class="text-xs text-gray-400 mt-1 mb-4">Il modulo esterno 'shop.html' sta per essere collegato alla piattaforma principale.</p>
+                        <div class="text-xs bg-slate-950 p-3 rounded-xl text-left border border-slate-800 font-mono text-gray-500">
+                            // Codice Amministratore Rilevato:<br>
+                            // Sblocchi automatici attivi.
+                        </div>
+                    </div>`;
+            } 
+            else if(target === 'trophy') {
+                container.innerHTML = `
+                    <h2 class="text-sm font-black tracking-widest text-gray-500 mb-2 uppercase">Trophy Road & Ranghi</h2>
+                    <p class="text-xs text-gray-400 mb-6">Accumula vittorie nei moduli attivi per scalare la classifica del server.</p>
+                    <div class="max-w-xl mx-auto space-y-3 mt-4">
+                        <div class="bg-slate-900 border border-slate-800 p-4 rounded-xl flex justify-between items-center">
+                            <div class="flex items-center space-x-3">
+                                <span class="text-xl">🥉</span>
+                                <div><h4 class="text-xs font-bold text-gray-200">Rango Bronzo</h4><p class="text-[10px] text-gray-500">Traguardo base di ingresso</p></div>
+                            </div>
+                            <span class="text-xs font-mono text-green-400 font-bold">SBLOCCATO</span>
+                        </div>
+                        <div class="bg-slate-900 border border-slate-800 p-4 rounded-xl flex justify-between items-center opacity-50">
+                            <div class="flex items-center space-x-3">
+                                <span class="text-xl">🥈</span>
+                                <div><h4 class="text-xs font-bold text-gray-200">Rango Argento</h4><p class="text-[10px] text-gray-500">Richiede 100 Trofei Globali</p></div>
+                            </div>
+                            <span class="text-xs font-mono text-gray-500">BLOCCATO</span>
+                        </div>
+                    </div>`;
+            }
+        }
+
+        // 4. CHAT INTERNA STREAM
         function sendMsg(e) {
             e.preventDefault();
             let inp = document.getElementById('chat-in');
             if(!inp.value.trim()) return;
             let box = document.getElementById('chat-box');
-            box.innerHTML += `<div><strong class="text-green-400">👑 ${username}:</strong> ${inp.value.trim()}</div>`;
+            box.innerHTML += `<div><strong class="text-green-400">${systemData.skin} ${systemData.username}:</strong> <span class="text-gray-100">${inp.value.trim()}</span></div>`;
             inp.value = '';
             box.scrollTop = box.scrollHeight;
         }
 
-        function resetCoins() {
-            if(coins <= 0) {
-                coins = 500;
-                document.getElementById('p-coins').innerText = coins;
-                alert("Saldo ricaricato con successo!");
+        // 5. BANCO REFILL ECONOMIA
+        function claimDailyBonus() {
+            systemData.coins = parseInt(localStorage.getItem('sys_coins')) || 0;
+            if(systemData.coins <= 0) {
+                systemData.coins = 500;
+                localStorage.setItem('sys_coins', 500);
+                localStorage.setItem('greyCoins', 500);
+                document.getElementById('p-coins').innerText = 500;
+                alert("Ricarica di emergenza completata: +500 GreyCoins iniettati nel profilo!");
             } else {
-                alert("Puoi ricaricare solo se hai terminato le monete!");
+                alert(`Hai ancora un saldo attivo di ${systemData.coins} monete. Il refill funziona solo se sei a secco!`);
             }
         }
     </script>
